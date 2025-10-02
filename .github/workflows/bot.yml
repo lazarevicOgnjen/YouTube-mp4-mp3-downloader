@@ -29,6 +29,7 @@ jobs:
       - name: Run downloader
         env:
           YOUTUBE_URL: ${{ github.event.inputs.url }}
+          YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
         run: python main.py
 
       - name: Upload MP4
