@@ -1,0 +1,44 @@
+name: YouTube downloader (MP4 + MP3)
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "YouTube URL to grab"
+        required: true
+        type: string
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install yt-dlp & ffmpeg
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Run downloader
+        env:
+          YOUTUBE_URL: ${{ github.event.inputs.url }}
+        run: python main.py
+
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-video-mp4
+          path: video.mp4
+
+      - name: Upload MP3
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-audio-mp3
+          path: audio.mp3
